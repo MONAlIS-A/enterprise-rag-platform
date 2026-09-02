@@ -199,3 +199,7 @@ docker-compose.override.yml
 .local/
 .runtime/
 .dev/
+
+# Python cache
+__pycache__/
+*.py[cod]
