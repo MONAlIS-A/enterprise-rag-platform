@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import uuid4
 
 import pytest
@@ -11,7 +11,7 @@ from app.domain.entities.document import (
 
 
 def test_document_rejects_empty_title():
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     with pytest.raises(ValueError, match="Document title cannot be empty."):
         Document(
@@ -25,8 +25,9 @@ def test_document_rejects_empty_title():
             updated_at=now,
         )
 
+
 def test_document_rejects_empty_source_uri():
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     with pytest.raises(
         ValueError,
@@ -43,8 +44,9 @@ def test_document_rejects_empty_source_uri():
             updated_at=now,
         )
 
+
 def test_document_creation_with_valid_data():
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     document_id = uuid4()
     owner_id = uuid4()
 
@@ -68,8 +70,9 @@ def test_document_creation_with_valid_data():
     assert document.created_at == now
     assert document.updated_at == now
 
+
 def test_document_allows_valid_status_transition():
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     document = Document(
         id=uuid4(),
@@ -86,8 +89,9 @@ def test_document_allows_valid_status_transition():
 
     assert document.status == DocumentStatus.PROCESSING
 
+
 def test_document_rejects_invalid_status_transition():
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     document = Document(
         id=uuid4(),
@@ -106,9 +110,10 @@ def test_document_rejects_invalid_status_transition():
     ):
         document.transition_to(DocumentStatus.PENDING)
 
+
 def test_document_updates_timestamp_on_status_transition():
-    created_at = datetime(2026, 1, 1, tzinfo=timezone.utc)
-    updated_at = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    created_at = datetime(2026, 1, 1, tzinfo=UTC)
+    updated_at = datetime(2026, 1, 1, tzinfo=UTC)
 
     document = Document(
         id=uuid4(),

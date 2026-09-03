@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 from uuid import UUID
 
 
-class DocumentStatus(str, Enum):
+class DocumentStatus(StrEnum):
     PENDING = "pending"
     PROCESSING = "processing"
     READY = "ready"
@@ -12,7 +12,7 @@ class DocumentStatus(str, Enum):
     ARCHIVED = "archived"
 
 
-class DocumentSourceType(str, Enum):
+class DocumentSourceType(StrEnum):
     PDF = "pdf"
     DOCX = "docx"
     URL = "url"
@@ -55,9 +55,8 @@ class Document:
 
         if new_status not in allowed_transitions[self.status]:
             raise ValueError(
-                f"Invalid document status transition: "
-                f"{self.status.value} -> {new_status.value}"
+                f"Invalid document status transition: {self.status.value} -> {new_status.value}"
             )
 
         self.status = new_status
-        self.updated_at = datetime.now(timezone.utc)
+        self.updated_at = datetime.now(UTC)

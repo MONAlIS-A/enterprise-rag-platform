@@ -1,12 +1,12 @@
-from datetime import datetime, timezone
+from datetime import UTC
 from uuid import UUID, uuid4
 
 import pytest
 
+from app.application.dto.create_document import CreateDocumentCommand
 from app.application.use_cases.create_document import CreateDocumentUseCase
 from app.domain.entities.document import DocumentSourceType
 from app.domain.repositories.document_repository import DocumentRepository
-from app.application.dto.create_document import CreateDocumentCommand
 
 
 class FakeDocumentRepository(DocumentRepository):
@@ -19,11 +19,7 @@ class FakeDocumentRepository(DocumentRepository):
 
     def get_by_id(self, document_id: UUID):
         return next(
-            (
-                document
-                for document in self.saved_documents
-                if document.id == document_id
-            ),
+            (document for document in self.saved_documents if document.id == document_id),
             None,
         )
 
@@ -49,8 +45,8 @@ def test_create_document_creates_pending_document():
     assert document.owner_id == owner_id
     assert document.status.value == "pending"
     assert isinstance(document.id, UUID)
-    assert document.created_at.tzinfo == timezone.utc
-    assert document.updated_at.tzinfo == timezone.utc
+    assert document.created_at.tzinfo == UTC
+    assert document.updated_at.tzinfo == UTC
 
 
 def test_create_document_saves_document_to_repository():

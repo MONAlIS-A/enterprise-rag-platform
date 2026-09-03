@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import uuid4
 
 from app.application.dto.create_document import CreateDocumentCommand
@@ -11,7 +11,7 @@ class CreateDocumentUseCase:
         self.document_repository = document_repository
 
     def execute(self, command: CreateDocumentCommand) -> Document:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         document = Document(
             id=uuid4(),

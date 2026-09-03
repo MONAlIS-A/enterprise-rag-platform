@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 import pytest
@@ -31,7 +31,7 @@ def test_repository_contract_requires_save_and_get_by_id():
 def test_fake_repository_implements_contract():
     repository = FakeDocumentRepository()
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     document_id = uuid4()
 
     document = Document(

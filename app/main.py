@@ -8,7 +8,6 @@ from app.core.exception_handler import app_exception_handler
 from app.core.exceptions import AppException
 from app.core.logging import log_requests, setup_logging
 
-
 setup_logging()
 
 settings = get_settings()
