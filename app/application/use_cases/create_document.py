@@ -1,11 +1,8 @@
 from datetime import datetime, timezone
-from uuid import UUID, uuid4
+from uuid import uuid4
 
-from app.domain.entities.document import (
-    Document,
-    DocumentSourceType,
-    DocumentStatus,
-)
+from app.application.dto.create_document import CreateDocumentCommand
+from app.domain.entities.document import Document, DocumentStatus
 from app.domain.repositories.document_repository import DocumentRepository
 
 
@@ -13,22 +10,16 @@ class CreateDocumentUseCase:
     def __init__(self, document_repository: DocumentRepository) -> None:
         self.document_repository = document_repository
 
-    def execute(
-        self,
-        title: str,
-        source_type: DocumentSourceType,
-        source_uri: str,
-        owner_id: UUID,
-    ) -> Document:
+    def execute(self, command: CreateDocumentCommand) -> Document:
         now = datetime.now(timezone.utc)
 
         document = Document(
             id=uuid4(),
-            title=title,
-            source_type=source_type,
-            source_uri=source_uri,
+            title=command.title,
+            source_type=command.source_type,
+            source_uri=command.source_uri,
             status=DocumentStatus.PENDING,
-            owner_id=owner_id,
+            owner_id=command.owner_id,
             created_at=now,
             updated_at=now,
         )

@@ -6,6 +6,7 @@ import pytest
 from app.application.use_cases.create_document import CreateDocumentUseCase
 from app.domain.entities.document import DocumentSourceType
 from app.domain.repositories.document_repository import DocumentRepository
+from app.application.dto.create_document import CreateDocumentCommand
 
 
 class FakeDocumentRepository(DocumentRepository):
@@ -34,10 +35,12 @@ def test_create_document_creates_pending_document():
     owner_id = uuid4()
 
     document = use_case.execute(
-        title="Employee Handbook",
-        source_type=DocumentSourceType.PDF,
-        source_uri="documents/employee-handbook.pdf",
-        owner_id=owner_id,
+        CreateDocumentCommand(
+            title="Employee Handbook",
+            source_type=DocumentSourceType.PDF,
+            source_uri="documents/employee-handbook.pdf",
+            owner_id=owner_id,
+        )
     )
 
     assert document.title == "Employee Handbook"
@@ -55,10 +58,12 @@ def test_create_document_saves_document_to_repository():
     use_case = CreateDocumentUseCase(repository)
 
     document = use_case.execute(
-        title="Security Policy",
-        source_type=DocumentSourceType.DOCX,
-        source_uri="documents/security-policy.docx",
-        owner_id=uuid4(),
+        CreateDocumentCommand(
+            title="Security Policy",
+            source_type=DocumentSourceType.DOCX,
+            source_uri="documents/security-policy.docx",
+            owner_id=uuid4(),
+        )
     )
 
     assert len(repository.saved_documents) == 1
@@ -74,10 +79,11 @@ def test_create_document_propagates_domain_validation_error():
         match="Document title cannot be empty.",
     ):
         use_case.execute(
-            title="   ",
-            source_type=DocumentSourceType.PDF,
-            source_uri="documents/employee-handbook.pdf",
-            owner_id=uuid4(),
+            CreateDocumentCommand(
+                title="   ",
+                source_type=DocumentSourceType.PDF,
+                source_uri="documents/employee-handbook.pdf",
+                owner_id=uuid4(),
+            )
         )
-
     assert repository.saved_documents == []
