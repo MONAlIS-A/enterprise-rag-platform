@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+from uuid import UUID
 
 from app.api.dependencies import get_db
 from app.api.schemas import CreateDocumentRequest, DocumentResponse
@@ -12,6 +13,7 @@ from app.infrastructure.database.repositories.document_repository import (
     SqlAlchemyDocumentRepository,
 )
 from app.infrastructure.database.session import SessionLocal
+from app.application.use_cases.get_document import GetDocumentUseCase
 
 
 router = APIRouter()
@@ -67,6 +69,29 @@ def create_document(
     )
 
     document = use_case.execute(command)
+
+    return DocumentResponse(
+        id=document.id,
+        title=document.title,
+        source_type=document.source_type,
+        source_uri=document.source_uri,
+        status=document.status.value,
+        owner_id=document.owner_id,
+        created_at=document.created_at,
+        updated_at=document.updated_at,
+    )
+
+@router.get(
+    "/documents/{document_id}",
+    response_model=DocumentResponse,
+)
+def get_document(
+    document_id: UUID,
+    repository: DocumentRepository = Depends(get_document_repository),
+) -> DocumentResponse:
+    use_case = GetDocumentUseCase(repository)
+
+    document = use_case.execute(document_id)
 
     return DocumentResponse(
         id=document.id,
